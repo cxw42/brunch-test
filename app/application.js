@@ -2,6 +2,7 @@
 
 // Pull dependencies we will use from elsewhere, so that they will be bundled
 require('simpletest');
+require('multidex');
 
 // Our code
 console.log({require});
