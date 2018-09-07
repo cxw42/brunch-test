@@ -14,12 +14,23 @@ require.register("${path}", function(exports, require, module) {
     return retval;
 } //wrapper
 
+// Trim module names in lib/ so that we can require('foo') rather than
+// require('lib/foo').  See, e.g., https://stackoverflow.com/q/18859007/2877364
+function nameCleaner(path)
+{
+    return path.replace(/^(app|lib)\//,'');
+        // app/ is trimmed by default, so keep it in there.
+
+    // node_modules support is built in to brunch, so we don't have to
+    // handle it here.
+} //nameCleaner
+
 // === The config ===============================================
 
 module.exports = {
     paths: {
         // Bundle from these:
-        watched: ['app', 'test', 'vendor', 'wapp'],
+        watched: ['app', 'lib', 'vendor', 'wapp', 'test'],
     },
 
     files: {
@@ -31,12 +42,22 @@ module.exports = {
     conventions: {
         // Don't wrap the following in modules:
         vendor: [ /(^bower_components|node_modules|vendor|^wapp)\// ],
-            // default, plus ^wapp
+            // default, plus ^wapp.  Note, however, that node_modules
+            // appears to be handled specially by
+            // https://github.com/brunch/deppack so that CommonJS modules
+            // can be used in the browser.
     },
 
-    // Use the wrapper we defined above
-    modules: { wrapper },   // Note: only applies to things that get wrapped,
-                            // i.e., non-`vendor`.
+    // Use the helpers we defined above
+    modules: {
+
+        // Special wrapper that adds names
+        wrapper,    // Note: only applies to things that get wrapped,
+                    // i.e., non-`vendor`.
+
+        // Map lib/foo->foo
+        nameCleaner,
+    },
 };
 
 // vi: set ts=4 sts=4 sw=4 et ai: //
