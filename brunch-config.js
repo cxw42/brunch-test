@@ -1,16 +1,32 @@
 // brunch-config.js for brunch-test by cxw42
 
 // Make our wrapped files stand out a bit more in the generated source
+let seen_modules = Object.create(null);
+
 function wrapper(path, data)
 {
-    let retval = `\n// ${path} /////////////////////////////////\n`;
+    seen_modules[path] = (seen_modules[path] || 0) + 1;
+    console.log(`Wrapping ${path}; time #${seen_modules[path]}`);
+
+    let retval = '\n// ' + `${path} #${seen_modules[path]}` +
+        ' /////////////////////////////////\n';
+
     // Add the commonjs wrapper - copied from
     // https://github.com/brunch/brunch/blob/95902d9c24efb61e613c6c45bc6a33b819ec51ee/lib/utils/modules.js#L7
+    let path_str = `'${path}'`.replace('$','$$$$');
+    if(path.match(/lib\/inner/)) {
+        console.log(data);
+    }
+    let new_data = data.replace(/\b__filename\b/g, path_str);
+
     retval += `
 require.register("${path}", function(exports, require, module) {
-    ${data}
+${new_data}
 });\n\n`
-    retval += "\n/////////////////////////////////\n\n";
+    retval += '\n/////////////////////////////////\n\n';
+    if(path.match(/lib\/inner/)) {
+        console.log(`---------- Output -----\n${retval}\n---------------\n`);
+    }
     return retval;
 } //wrapper
 
@@ -52,11 +68,25 @@ module.exports = {
     modules: {
 
         // Special wrapper that adds names
-        wrapper,    // Note: only applies to things that get wrapped,
+        //wrapper,    // Note: only applies to things that get wrapped,
                     // i.e., non-`vendor`.
 
         // Map lib/foo->foo
         nameCleaner,
+    },
+
+    plugins: {
+        replacer: {
+            dict: [
+                {
+                    key: /\b__filename\b/,
+                    // No value needed - the custom replacer below supplies it
+                }
+            ],
+            replace: (str, key, value, path) => {
+                return str.split(key).join(`'${path}'`)
+            }
+        },
     },
 };
 

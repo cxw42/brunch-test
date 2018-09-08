@@ -10,7 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "brunch": "^2.10.17",
-    "uglify-es-brunch": "^1.0.5"
+    "uglify-es-brunch": "^1.0.5",
+    "replacer-brunch": "cxw42/replacer-brunch#path"
   },
   "dependencies": {
     "cowsay": "^1.3.1"
