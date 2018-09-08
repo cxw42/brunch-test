@@ -7,7 +7,7 @@ let seen_modules = Object.create(null);
 function wrapper(path, data)
 {
     seen_modules[path] = (seen_modules[path] || 0) + 1;
-    console.log(`Wrapping ${path}; time #${seen_modules[path]}`);
+    //console.log(`Wrapping ${path}; time #${seen_modules[path]}`);
 
     let retval = '\n// WRAPPED ' + `${path} #${seen_modules[path]}` +
         ' /////////////////////////////////\n';
@@ -40,6 +40,8 @@ module.exports = {
     paths: {
         // Bundle from these:
         watched: ['app', 'lib', 'vendor', 'wapp', 'test'],
+            // All of these will be wrapped, except for those matching
+            // conventions.vendor below.
     },
 
     files: {
@@ -55,6 +57,9 @@ module.exports = {
             // appears to be handled specially by
             // https://github.com/brunch/deppack so that CommonJS modules
             // can be used in the browser.
+            //
+            // In this example, lib/ is watched but is not a vendor directory.
+            // Therefore, modules in lib/ are wrapped.
     },
 
     // Use the helpers we defined above
@@ -69,7 +74,7 @@ module.exports = {
     },
 
     plugins: {
-        replacer: {
+        replacer: {     // Permit using __filename in modules
             dict: [
                 {
                     key: /\b__filename\b/,
@@ -79,6 +84,12 @@ module.exports = {
             replace: (str, key, value, path) => {
                 return str.split(key).join(`'${path}'`)
             }
+        },
+    },
+
+    overrides: {
+        production: {       // Always generate source maps, even in production
+            sourceMaps: true,
         },
     },
 };
