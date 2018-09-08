@@ -1,12 +1,18 @@
 {
   "name": "brunch-test",
   "version": "1.0.0",
-  "description": "",
+  "description": "Test of brunch with various wrapper configurations",
+  "repository": {
+    "type": "git",
+    "url" : "https://github.com/cxw42/brunch-test"
+  },
   "main": "index.js",
   "scripts": {
+    "build": "npx brunch build",
+    "watch": "npx brunch watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Chris White <cxwembedded@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "brunch": "^2.10.17",
