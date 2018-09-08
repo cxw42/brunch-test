@@ -1,3 +1,4 @@
+// main1.js
 'use strict';
 
 // Pull dependencies we will use from elsewhere, so that they will be bundled
@@ -16,6 +17,6 @@ const App = {
 };
 
 module.exports = App;
-console.log("hello from application.js");
+console.log("hello from main1.js");
 
 require('simpletestnm')();

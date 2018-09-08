@@ -46,7 +46,13 @@ module.exports = {
 
     files: {
         javascripts: {
-            joinTo: 'app.js',   // Any and all JS into here
+            joinTo: {
+                'vendor.js': /^(?!app\/)/,
+            },
+            entryPoints: {
+                'app/page1/main1.js': 'packed1.js',
+                'app/page2/main2.js': 'packed2.js',
+            },
         },
     },
 
