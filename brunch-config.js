@@ -2,31 +2,24 @@
 
 // Make our wrapped files stand out a bit more in the generated source
 let seen_modules = Object.create(null);
+    // to count how many times each file is processed
 
 function wrapper(path, data)
 {
     seen_modules[path] = (seen_modules[path] || 0) + 1;
     console.log(`Wrapping ${path}; time #${seen_modules[path]}`);
 
-    let retval = '\n// ' + `${path} #${seen_modules[path]}` +
+    let retval = '\n// WRAPPED ' + `${path} #${seen_modules[path]}` +
         ' /////////////////////////////////\n';
 
     // Add the commonjs wrapper - copied from
     // https://github.com/brunch/brunch/blob/95902d9c24efb61e613c6c45bc6a33b819ec51ee/lib/utils/modules.js#L7
-    let path_str = `'${path}'`.replace('$','$$$$');
-    if(path.match(/lib\/inner/)) {
-        console.log(data);
-    }
-    let new_data = data.replace(/\b__filename\b/g, path_str);
-
     retval += `
 require.register("${path}", function(exports, require, module) {
-${new_data}
+${data}
 });\n\n`
+
     retval += '\n/////////////////////////////////\n\n';
-    if(path.match(/lib\/inner/)) {
-        console.log(`---------- Output -----\n${retval}\n---------------\n`);
-    }
     return retval;
 } //wrapper
 
@@ -68,7 +61,7 @@ module.exports = {
     modules: {
 
         // Special wrapper that adds names
-        //wrapper,    // Note: only applies to things that get wrapped,
+        wrapper,    // Note: only applies to things that get wrapped,
                     // i.e., non-`vendor`.
 
         // Map lib/foo->foo
