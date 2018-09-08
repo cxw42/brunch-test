@@ -1,5 +1,34 @@
 // brunch-config.js for brunch-test by cxw42
 
+// Tweaked from code by David Walsh,
+// from https://davidwalsh.name/nested-objects , MIT license
+var Objectifier = (function() {
+
+    // Utility method to get and set objects that may or may not exist
+    var objectifier = function(splits, create, context) {
+        var result = context || global || window;
+        for(var i = 0, s; result && (s = splits[i]); i++) {
+            result = (s in result ? result[s] : (create ? result[s] = {} : undefined));
+        }
+        return result;
+    };
+
+    return {
+        // Creates an object if it doesn't already exist
+        set: function(name, value, context) {
+            var splits = name.split('.'), s = splits.pop(), result = objectifier(splits, true, context);
+            return result && s ? (result[s] = value) : undefined;
+        },
+        get: function(name, create, context) {
+            return objectifier(name.split('.'), create, context);
+        },
+        exists: function(name, context) {
+            return this.get(name, false, context) !== undefined;
+        }
+    };
+
+})();
+
 // Make our wrapped files stand out a bit more in the generated source
 let seen_modules = Object.create(null);
     // to count how many times each file is processed
@@ -36,10 +65,11 @@ function nameCleaner(path)
 
 // === The config ===============================================
 
-module.exports = {
+// --- General settings --------------------------
+let config = {
     paths: {
         // Bundle from these:
-        watched: ['app', 'lib', 'vendor', 'wapp', 'test'],
+        watched: ['lib', 'vendor', 'wapp', 'test'],
             // All of these will be wrapped, except for those matching
             // conventions.vendor below.
     },
@@ -93,5 +123,16 @@ module.exports = {
         },
     },
 };
+
+// --- Page-specific settings --------------------
+let set = (path,val) => Objectifier.set(path, val, config.overrides);
+
+set('page1.paths.watched', config.paths.watched.concat(['app/page1']));
+set('page1.paths.public', 'public/page1', config.overrides);
+
+set('page2.paths.watched', config.paths.watched.concat(['app/page2']));
+set('page2.paths.public', 'public/page2');
+
+module.exports = config;
 
 // vi: set ts=4 sts=4 sw=4 et ai: //

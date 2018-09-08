@@ -11,11 +11,11 @@ const cowsay=require('cowsay');
 
 const App = {
   init() {
-    console.log(cowsay.say({text: 'Hello, world!'}));
+    console.log(cowsay.say({text: 'Hello, world! from page2'}));
   }
 };
 
 module.exports = App;
-console.log("hello from application.js");
+console.log("hello from " + __filename);
 
 require('simpletestnm')();

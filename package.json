@@ -8,8 +8,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "npx brunch build",
-    "watch": "npx brunch watch",
+    "build": "sh -c 'npx brunch build -e page1 ; npx brunch build -e page2'",
+    "watch": "echo \"Use npx brunch w -e <page1|page2>\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Chris White <cxwembedded@gmail.com>",
