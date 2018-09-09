@@ -112,6 +112,7 @@ let config = {
                 }
             ],
             replace: (str, key, value, path) => {
+                console.log(`Replacing in ${path}`);
                 return str.split(key).join(`'${path}'`)
             }
         },
