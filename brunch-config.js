@@ -23,43 +23,37 @@ ${data}
     return retval;
 } //wrapper
 
-// Trim module names in lib/ so that we can require('foo') rather than
-// require('lib/foo').  See, e.g., https://stackoverflow.com/q/18859007/2877364
-function nameCleaner(path)
-{
-    return path.replace(/^(app|lib)\//,'');
-        // app/ is trimmed by default, so keep it in there.
-
-    // node_modules support is built in to brunch, so we don't have to
-    // handle it here.
-} //nameCleaner
-
 // === The config ===============================================
 
 module.exports = {
     paths: {
         // Bundle from these:
-        watched: ['app', 'lib', 'vendor', 'wapp', 'test'],
+        watched: ['app', 'lib', 'vendor'],
             // All of these will be wrapped, except for those matching
-            // conventions.vendor below.
+            // conventions.vendor below.  For example, lib/* will be wrapped.
     },
 
     files: {
         javascripts: {
             joinTo: 'app.js',   // Any and all JS into here
+            order: {
+                before: /^vendor\//,
+                    // conventions.vendor below specifies that *_tl* are
+                    // top-level modules.  This line causes files in the
+                    // vendor/ directory to go before other vendor files,
+                    // e.g., *_tl* files.  All the vendor files go after
+                    // the wrapped modules.
+            },
         },
     },
 
     conventions: {
         // Don't wrap the following in modules:
-        vendor: [ /((^bower_components|node_modules|vendor|^wapp)\/)|(_tl)/ ],
-            // default, plus ^wapp.  Note, however, that node_modules
+        vendor: [ /((^bower_components|node_modules|vendor)\/)|(_tl)/ ],
+            // default, plus _tl.  Note, however, that node_modules
             // appears to be handled specially by
             // https://github.com/brunch/deppack so that CommonJS modules
             // can be used in the browser.
-            //
-            // In this example, lib/ is watched but is not a vendor directory.
-            // Therefore, modules in lib/ are wrapped.
             //
             // _tl is so that individual source files can be flagged as
             // top-level (unwrapped).  However, note that dependencies in
@@ -70,11 +64,13 @@ module.exports = {
     modules: {
 
         // Special wrapper that adds names
-        wrapper,    // Note: only applies to things that get wrapped,
+        //wrapper,    // Note: only applies to things that get wrapped,
                     // i.e., non-`vendor`.
 
         // Map lib/foo->foo
-        nameCleaner,
+        nameCleaner: path => path.replace(/^(app|lib)\//,''),
+            // node_modules support is built in to brunch, so we don't have to
+            // handle it here.
     },
 
     plugins: {
@@ -88,10 +84,6 @@ module.exports = {
             replace: (str, key, value, path) => {
                 return str.split(key).join(`'${path}'`)
             }
-        },
-
-        uglify: {
-            //ignored: /./,   // For now, don't uglify anything.
         },
     },
 

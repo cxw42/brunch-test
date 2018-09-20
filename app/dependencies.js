@@ -8,5 +8,6 @@ module.exports = {
     simpletestnm: require('simpletestnm'),
     multidex: require('multidex'),
     cowsay: require('cowsay'),
+    libmodule: require('libmodule'),
 };
 

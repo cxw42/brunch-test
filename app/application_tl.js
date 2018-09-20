@@ -23,4 +23,5 @@ console.log("hello from application.js");
 require('simpletestnm')();
 
 console.log('Call from application_tl to single file: ' + require('app_helper')());
+console.log('Call from application_tl to libmodule: ' + require('libmodule')());
 // vi: set ts=4 sts=4 sw=4 et ai: //
