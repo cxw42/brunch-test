@@ -4,10 +4,10 @@
 // Note: This is because dependency tracking only happens in wrapped
 // modules, not in vendor modules.
 module.exports = {
-    simpletest: require('simpletest'),
+    simpletest: require('lib/simpletest'),
     simpletestnm: require('simpletestnm'),
-    multidex: require('multidex'),
+    multidex: require('lib/multidex'),
     cowsay: require('cowsay'),
-    libmodule: require('libmodule'),
+    libmodule: require('lib/libmodule'),
 };
 

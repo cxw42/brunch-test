@@ -1,30 +1,5 @@
 // brunch-config.js for brunch-test by cxw42
 
-// Make our wrapped files stand out a bit more in the generated source
-let seen_modules = Object.create(null);
-    // to count how many times each file is processed
-
-function wrapper(path, data)
-{
-    seen_modules[path] = (seen_modules[path] || 0) + 1;
-    //console.log(`Wrapping ${path}; time #${seen_modules[path]}`);
-
-    let retval = '\n// WRAPPED ' + `${path} #${seen_modules[path]}` +
-        ' /////////////////////////////////\n';
-
-    // Add the commonjs wrapper - copied from
-    // https://github.com/brunch/brunch/blob/95902d9c24efb61e613c6c45bc6a33b819ec51ee/lib/utils/modules.js#L7
-    retval += `
-require.register("${path}", function(exports, require, module) {
-${data}
-});\n\n`
-
-    retval += '\n/////////////////////////////////\n\n';
-    return retval;
-} //wrapper
-
-// === The config ===============================================
-
 module.exports = {
     paths: {
         // Bundle from these:
@@ -48,38 +23,20 @@ module.exports = {
     },
 
     conventions: {
-        // Don't wrap the following in modules:
-        vendor: [ /((^bower_components|node_modules|vendor)\/)|(_tl)/ ],
-            // default, plus _tl.  Note, however, that node_modules
-            // appears to be handled specially by
-            // https://github.com/brunch/deppack so that CommonJS modules
-            // can be used in the browser.
+        // Don't wrap the following in modules.  Note that these files
+        // are not scanned for dependencies, except for node_modules.
+        vendor: [ /((^node_modules|vendor)\/)|(_tl)/ ],
+            // `node_modules` must be listed, but is handled specially by
+            // brunch so that CommonJS modules can be used in the browser.
             //
-            // _tl is so that individual source files can be flagged as
-            // top-level (unwrapped).  However, note that dependencies in
-            // vendor files are not detected.
-    },
-
-    // Use the helpers we defined above
-    modules: {
-
-        // Special wrapper that adds names
-        //wrapper,    // Note: only applies to things that get wrapped,
-                    // i.e., non-`vendor`.
-
-        // Map lib/foo->foo
-        nameCleaner: path => path.replace(/^(app|lib)\//,''),
-            // node_modules support is built in to brunch, so we don't have to
-            // handle it here.
+            // _tl is so that individual source files, e.g., in app/,
+            // can be flagged as top-level (unwrapped).
     },
 
     plugins: {
         replacer: {     // Permit using __filename in modules
             dict: [
-                {
-                    key: /\b__filename\b/,
-                    // No value needed - the custom replacer below supplies it
-                }
+                { key: /\b__filename\b/, }
             ],
             replace: (str, key, value, path) => {
                 return str.split(key).join(`'${path}'`)

@@ -23,5 +23,7 @@ console.log("hello from application.js");
 require('simpletestnm')();
 
 console.log('Call from application_tl to single file: ' + require('app_helper')());
-console.log('Call from application_tl to libmodule: ' + require('libmodule')());
+    // Is in `app/`, which is prefixed by default,
+    // so we don't need a `./` or `app/`.
+console.log('Call from application_tl to libmodule: ' + require('lib/libmodule')());
 // vi: set ts=4 sts=4 sw=4 et ai: //
