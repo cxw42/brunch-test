@@ -1,9 +1,9 @@
 'use strict';
 // APPTL
 
-var Modules = require('dependencies');
-    // Need this in a separate, non-vendor module, so that Brunch will scan
-    // it for dependencies.
+var Modules = require('main/dependencies');
+    // can't use './dependencies' because we're in the top level, where
+    // there is no relativeRequire.
 
 // Our code
 console.log({require});
@@ -22,8 +22,7 @@ console.log("hello from application.js");
 
 require('simpletestnm')();
 
-console.log('Call from application_tl to single file: ' + require('app_helper')());
-    // Is in `app/`, which is prefixed by default,
-    // so we don't need a `./` or `app/`.
+console.log('Call from application_tl to single file: ' + require('main/app_helper')());
+    // app/ is prefixed by default, so main/... is enough.
 console.log('Call from application_tl to libmodule: ' + require('lib/libmodule')());
 // vi: set ts=4 sts=4 sw=4 et ai: //

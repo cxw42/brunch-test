@@ -10,7 +10,11 @@ module.exports = {
 
     files: {
         javascripts: {
-            joinTo: 'app.js',   // Any and all JS into here
+            entryPoints: {
+                'app/main/dependencies.js': 'main/app.js',
+                'app/side/dependencies.js': 'side/app.js',
+            },
+
             order: {
                 before: /^vendor\//,
                     // conventions.vendor below specifies that *_tl* are
