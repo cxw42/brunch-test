@@ -52,7 +52,7 @@ module.exports = {
 
     conventions: {
         // Don't wrap the following in modules:
-        vendor: [ /(^bower_components|node_modules|vendor|^wapp)\// ],
+        vendor: [ /((^bower_components|node_modules|vendor|^wapp)\/)|(_tl)/ ],
             // default, plus ^wapp.  Note, however, that node_modules
             // appears to be handled specially by
             // https://github.com/brunch/deppack so that CommonJS modules
@@ -60,6 +60,10 @@ module.exports = {
             //
             // In this example, lib/ is watched but is not a vendor directory.
             // Therefore, modules in lib/ are wrapped.
+            //
+            // _tl is so that individual source files can be flagged as
+            // top-level (unwrapped).  However, note that dependencies in
+            // vendor files are not detected.
     },
 
     // Use the helpers we defined above
@@ -84,6 +88,10 @@ module.exports = {
             replace: (str, key, value, path) => {
                 return str.split(key).join(`'${path}'`)
             }
+        },
+
+        uglify: {
+            //ignored: /./,   // For now, don't uglify anything.
         },
     },
 
